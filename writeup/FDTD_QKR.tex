@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+%\usepckage{bibliography}
+\title{First detection time distribution as a probe of coherent quantum dynamics}
+\date{15 December, 2022}
+\author{Anantha Rao}
+% \abstract{.
+}
+
+\begin{document}
+\maketitle
+
+The distribution of first arrival times or hitting times of a classical random walker, first characterized by Schrodinger (1915) through the renewal equation that relates the probability of the first arrival at a site and the occupation probabilities. For the simple case of an unbiased random walker on a 1D lattice, the first-passage time follows a Lévy distribution, decaying like $t^{-\frac{3}{2}}$, and has immense applications in electronics, financial modeling, etc. Contrary to classical random walks, quantum walks (under certain conditions) can provide a quadratic speedup, and investigating the first arrival times for such walks is paramount to characterize the running times of quantum search algorithms. Further, recent advances in experimental atom-optics, and single-particle quantum tracking have made it possible to realize quantum walks with larger coherence times and higher dimensionality.\\
+
+To discuss the first-arrival times in quantum walks, we need to distinguish between arrival vs detection times. Even in the classical case, the two times are different since the time of the first detection does not imply that the particle first arrived at the site if the sampling was not continuous. In the quantum case, the postulate of unitary evolution forbids any random motion while projective measurements necessitate the collapse of the wavefunction post-measurement. Since we cannot obtain the trajectory of a quantum particle, the problem of arrival times becomes ill-defined. Therefore, we treat the problem of first detection times under repeated stroboscopic measurements. We investigate the behavior of the first detection time distribution for different quantum systems and show that it is a "good" of coherent dynamics in single-body quantum systems. In Section1, we develop the formalism for the first detection time distribution, In Section2, we investigate the FDTD for the quantum kicked rotor model.
+
+\section{First detection time distribution}
+
+Consider a particle that performs a continuous-time quantum walk governed by the Hamiltonian in a line graph (like a tight-binding model). Our goal is to detect the wave function at a site of interest, say `x' by performing stroboscopic measurements at a sampling rate of $\tau$.
+
+We start with an initial wavefunction $|\psi (0)\rangle$ and evolve it until time $\tau$. Then, the detection of the particle at the target site is attempted, and with probability $P_1$ the first measurement is also the first detection. Computationally, there are two ways to simulate such a procedure: either consider a fixed threshold probability of detection or consider a uniform random number between $(0,1)$ and compare this with the detected probability. The former relies on the fact that the detector samples continuously with a fixed accuracy and is only used to probe the system at the sampling times ($n\tau$) while the latter models a more general case. If the particle is detected, the measurement time is $\tau$. If the particle is not detected, we compute $P_2$ using the quantum renewal equation (\ref{qre-derivation}). Then, at time $2\tau$ either the particle is detected with probability $P_2$ or not.  Thus, the probability of measuring the particle for the first time after n = 2 attempts is $F_2 = (1 - P_1 )P_2$ . This process is repeated until a measurement is recorded, and such a measurement is logged as the random first detection event. To construct the first detection probability, we initialize an ensemble of such particles and apply the described procedure. 
+
+\subsection{Quantum renewal equation}
+
+In this section, we investigate the probability of detecting a quantum particle undergoing a continuous time quantum walk according to equation. We perform stroboscopic measurements at the target site `x' at discrete times: $\{\tau, 2\tau, ... n\tau \}$ until the detector records the particle. The measurement provides two possible outcomes: either the particle is at the target site or not. Initialy, the system is prepared in a state $| \psi(0) \rangle$. Consider the first measurement, at time $\tau$. At $\tau ^- = \tau - \epsilon$ with $\epsilon \rightarrow 0$ being positive, the wave function is $| \psi(\tau^{-}\rangle = \mathcal{U}(\tau)|\psi(0)\rangle$ where $\mathcal{U} = \exp(-i\mathcal{H}t/\hbar)$. Putting $\hbar =1$, the probability of finding the particle at `x' is given by: $P_1 = |\langle x | \psi(\tau^{-})\rangle|^2$. If the measurement is positive, then the particle is said to be found at `x', and the first detection time (FDT) is $t_f=\tau$. If the particle is not detected (occurs with probability $1-P_1$), then the quantum system is evolved for another sampling time $\tau$. Post this measurement, the state of the system is $|\psi(\tau^{+})\rangle = (1 - |x\rangle\langle x|)/(\sqrt{1-P_1}) |\psi(\tau^{-})\rangle$. In essensce,  the measurement nullifies the wave functions on `x' and maintains the relative amplitudes of finding the particles outside the spatial domain of measurement device. Now, just before the time of second measurement, the state of the system is: $\psi(2\tau^{-}) = \mathcal{U}(\tau)|\psi(\tau^{+})\rangle$. The probability of finding the particle at `x', given that the first measurement returned null is: $P_2 = |\langle x | \mathcal{U}(\tau)| \psi(\tau^{+})\rangle|^2$. 
+
+
+To obtain a more general expression, we define the projection operator, $\hat{D} = |x\rangle\langle x|$. This enables us to write : 
+$P_2 = \frac{|\langle x|\mathcal{U}(\tau)(1-\hat{D})\mathcal{U}(\tau))| \psi(0)\rangle|^2}{1-P_1}$. This iteration can be continued to obtain the expression: 
+
+\begin{align}
+    P_n = \frac{|\langle x| [\mathcal{U}(\tau)(1-\hat{D})]^{n-1}\mathcal{U}(\tau)| \psi(0) \rangle |^2}{\Pi_{i=1}^{n-1} (1-P_{i})}
+\end{align}
+We define the first detection wave function as: 
+\begin{align}
+    |\theta _n\rangle = \mathcal{U}(\tau) [1-\hat{D}\mathcal{U}(\tau)]^{n-1} |\psi(0)\rangle
+\end{align}
+ or $| \theta _n \rangle = \mathcal{U}(\tau)[1-\hat{D}]^{n-1}|\theta_1\rangle$. This leads us to a general expression for $P_n$, the probability of first detection at the `n' measurement, given the first `n-1' measurements as null. 
+\begin{align}
+\label{eq_qre_1}
+    P_n = \frac{\langle \theta_n | \hat{D} | \theta_n \rangle}{\Pi_{j=1}^{n-1}(1-P_j)}
+\end{align}
+
+To simulate this process, we sample a uniform random number between (0,1) and compare it with $P_1$, if the particle is detected, the measurement time is $\tau$ . If the particle is not detected, we compute $P_2$. We perform the procedure again to comapre a random number from U(0,1) with $P_2$, if $P_2$ is larger, the first detection time is $2\tau$. The probability of measuring the particle for the first time after n = $\eta$ attempts is then : $F_{\eta} = (1-P_1)(1-P_2)...P_{\eta} = \langle \theta _{\eta} | \hat{D} | \theta_{\eta} \rangle$. 
+
+We define the amplitude of first detection as $\phi _n = \langle x | \theta _n \rangle$ such that $F_n = |\phi_n|^2$. Using the expression for $\theta_n$, we get: $\phi_1 = \langle x | \mathcal{U}(\tau)|\psi(0)\rangle$, $\phi_2 = \langle x | \mathcal{U}(\tau)|\psi(0)\rangle - \phi_1 \langle x|\mathcal{U}(2\tau)|x\rangle$, and by induction we obtain, the quantum renewal equation.: 
+\begin{align}
+    \label{eq_qre_2}
+    \phi_n = \langle x_d|\mathcal{U}(n\tau)|\psi(0)\rangle - \sum_{j=1}^{n-1} \phi_j \langle x_d | \mathcal{U}[n-j]\tau]|x_d\rangle
+\end{align}
+
+$\phi_n$ is the amplitude for being at detector site `$x_d$' at time $n\tau$ in the absence of measurements, from which we subtract $n-1$ terms related to the previous history of the system. The intuitive idea is that the condition of non-detection in previous measurements translates into subtracting wave sources at the detection site $|x_d\rangle$ following the $j^{th}$ detection attempt. The evolution of that wave source from the $j^{th}$ measurement onwards is described by the free hamiltonian, hence, $\langle x_d |U [(n-j )\tau]|x_d\rangle$ which yields the amplitude of first detection at `$x_d$' in the time interval $(j \tau,n\tau )$.
+
+
+\end{document}
